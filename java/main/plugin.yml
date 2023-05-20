@@ -1,0 +1,16 @@
+main: me.csdad.StarFarming.Main
+version: 1.0.5
+api-version: 1.19
+name: StarFarming
+author: csdad
+
+commands:
+    giveseed:
+        usage: /giveseed <target> <amount>
+        description: Command to give a target player a certain amount of a crop's seed.
+    levels:
+        usage: /levels
+        description: Command to view a player's leveling progress.
+    sellall:
+        usage: /sellall
+        description: Command that allow's a player to sell their produce and other applicable items.
