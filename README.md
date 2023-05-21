@@ -26,10 +26,6 @@ I've gotten this question a lot. This resource is popular inside of Chinese MC s
 ### I want to become a dev of the project
 When I first started this project, I actually had accepted a dev onto my team. I actually really don't want to do that, as I don't want to take away from my own ideas and vision of the project.
 
-### When will the rewrite be live?
-I want to also add a new feature inside the first iteration of this rewrite: npcs. So, once I figure out an efficient system for server owners to place these npcs and for the plugin to serialize this data, I will release it.
-
-
 # What's new in the rewrite?
 
 ### HolographicDisplays
