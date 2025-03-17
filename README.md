@@ -5,7 +5,7 @@ The resource can be found on spigot:
 https://www.spigotmc.org/resources/starfarming.106572/
 
 Want to stay up to date with features I'm working on for the current version? Join the remade discord:
-https://discord.gg/B2q9TBNXc2
+https://discord.gg/7eZKjYjBqB
 
 
 
