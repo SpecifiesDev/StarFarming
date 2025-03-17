@@ -1,0 +1,28 @@
+name: StarFarming
+main: me.csdad.starfarming.Core
+version: 2.0.0-SNAPSHOT
+api-version: 1.20
+author: csdad
+
+
+commands:
+    level:
+        usage: /level <parameter>
+        description: Level command to view information on StarLevels.
+        aliases: [lvl]
+    giveseed:
+        usage: /giveseed <target> <seed> <amount>
+        description: Administrator command to give a target player up to 64 seeds of a specific crop.
+        aliases: [gs]
+    setexperience:
+        usage: /setexperience <action> <target> <amount>
+        description: Administrator command to set, remove, or add experience to or from a player.
+        aliases: [setexp, setxp]
+    sellall:
+        usage: /sellall
+        description: Command for player's to sell their StarFarming produce for StarCoins.
+        aliases: [sa]
+    profile:
+        usage: /profile
+        description: Command for a player to view their StarFarming profile.
+        aliases: [pf]

@@ -37,6 +37,7 @@ This is just a top-down view of the major changes. Refer to the discord for deta
 + Tab completion added to all commands that have more than one argument.
 + /setexperience
 + /profile
++ /level <required/type> <level/xptype>
 + player settings
 + persistently save crops on reload, restart, or server stop event.
 + slight rng value changes for seed drops

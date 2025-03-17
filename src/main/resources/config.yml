@@ -1,0 +1,55 @@
+##########################
+#  StarFarming by csdad  #
+##########################
+
+# general information
+general:
+  seasons:
+    start-season: "SPRING" # What season will the plugin begin at on startup?
+    season-cycle: 15 # how long should a season be in minutes?
+  experience:
+    base: 500 # base xp required for level 0
+    roi: 1.75 # rate of increase of levels 
+
+
+# scoreboard settings
+scoreboard:
+    title: "&b&lStar&6&lFarming"
+  
+  
+
+# logging information
+logging:
+  verbose-info: true # general information logging will be verbose
+  ingame-prefix: "&bStar&6Farming" # prefix for any in-game commands
+
+# all database settings
+database:
+  use-mysql: false # set to true to utilize a hosted mysql server. otherwise plugin will default to using SQLite
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "StarFarming"
+    username: "root"
+    password: "password"
+  sqlite:
+    database-file: "starfarming.db"
+
+# all registered crops
+crops:
+  sweet_potato:
+    name: "&cSweet Potato"
+    material: POTATO
+    growth_time: 30
+    drop_chance: 0.25
+    xp_per: 5
+    base: 1
+    spread: 6
+    seasons:
+      - "SPRING"
+      - "FALL"
+      - "SUMMER"
+    product:
+      material: POTATO
+      name: "&6Sweet Potato Harvest"
+      sell_price: 20
