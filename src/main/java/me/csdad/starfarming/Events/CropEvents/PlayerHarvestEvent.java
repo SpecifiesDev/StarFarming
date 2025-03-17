@@ -27,6 +27,8 @@ import me.csdad.starfarming.DataStructures.CropInfo;
 import me.csdad.starfarming.DataStructures.PlantedCrop;
 import me.csdad.starfarming.DataStructures.Players.StarPlayer;
 import me.csdad.starfarming.Errors.PlayerMessaging;
+import me.csdad.starfarming.StarEvents.ExperienceGainEvent;
+import me.csdad.starfarming.StarEvents.StarCropHarvestEvent;
 import me.csdad.starfarming.Utility.ItemFactory;
 import me.csdad.starfarming.Utility.StringFormatting;
 
@@ -124,7 +126,7 @@ public class PlayerHarvestEvent implements Listener {
 		}
 		
 		// PC has a built in method, but it doesnt account for the need of variability so we implement a custom helper here
-		harvestCrop(crop, b, p);
+		harvestCrop(crop, b, p, player);
 		
 	}
 	
@@ -134,7 +136,7 @@ public class PlayerHarvestEvent implements Listener {
 	 * @param b The block location of the planted crop
 	 * @param p The owner of the crop
 	 */
-	private void harvestCrop(PlantedCrop crop, Block b, Player p) {
+	private void harvestCrop(PlantedCrop crop, Block b, Player p, StarPlayer player) {
 		
 		int randomProduce = getProduceAmount(crop.getCrop().getSpread(), crop.getCrop().getBase());
 		
@@ -158,6 +160,14 @@ public class PlayerHarvestEvent implements Listener {
 		if(!(b.getType() == Material.AIR)) b.setType(Material.AIR); // if the player is breaking, it will be air. otherwise we must break it.
 		this.plugin.getMemoryStore().getStarPlayer(p.getUniqueId().toString()).addExperience(xpGained); // add the xp to the player
 		this.plugin.getMemoryStore().removePlantedCrop(b); // remove
+		
+		// send down bukkit events so listeners can do something else later on
+		StarCropHarvestEvent harvestEvent = new StarCropHarvestEvent(player, p, crop.getCrop());
+		ExperienceGainEvent experienceEvent = new ExperienceGainEvent(player, p, xpGained, "farming");
+		
+		// call the events
+		Bukkit.getPluginManager().callEvent(harvestEvent);
+		Bukkit.getPluginManager().callEvent(experienceEvent);
 		
 	}
 	
@@ -201,7 +211,11 @@ public class PlayerHarvestEvent implements Listener {
 		
 		Player p = (Player) e.getWhoClicked();
 		
+		StarPlayer player = this.plugin.getMemoryStore().getStarPlayer(p.getUniqueId().toString());
+		
 		if(e.getCurrentItem() == null) return;
+		
+		if(player == null) return;
 		
 		if(this.plugin.getMemoryStore().getCropInfo(p) == null) return;
 		
@@ -218,7 +232,7 @@ public class PlayerHarvestEvent implements Listener {
 			
 			this.plugin.getMemoryStore().removeCropInfo(p); // remove the player as its going to take them out of this screen
 			p.closeInventory(); // close the player's inventory
-			harvestCrop(crop, crop.getCropBlock(), p); // harvest the crop
+			harvestCrop(crop, crop.getCropBlock(), p, player); // harvest the crop
 			
 			
 			

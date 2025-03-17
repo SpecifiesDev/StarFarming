@@ -40,6 +40,7 @@ import me.csdad.starfarming.Events.PlayerDataManagement;
 import me.csdad.starfarming.Events.CropEvents.PlayerHarvestEvent;
 import me.csdad.starfarming.Events.CropEvents.PlayerPlantEvent;
 import me.csdad.starfarming.Events.CropEvents.ProvideSeeds;
+import me.csdad.starfarming.Testing.TestCustomEvents;
 import me.csdad.starfarming.Utility.SeasonManager;
 import me.csdad.starfarming.Utility.StringFormatting;
 import net.md_5.bungee.api.ChatColor;
@@ -201,6 +202,10 @@ public class Core extends JavaPlugin {
 		
 		// register settings click events
 		pm.registerEvents(new HandleSettingsInteraction(), this);
+		
+		
+		// testing registration
+		// pm.registerEvents(new TestCustomEvents(), this);
 		
 	}
 	
