@@ -4,15 +4,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.json.JSONObject;
 
+import me.csdad.starfarming.Core;
 import me.csdad.starfarming.DataStructures.Players.StarPlayer;
 import me.csdad.starfarming.DataStructures.Players.StarPlayerSettings;
 import me.csdad.starfarming.Errors.DatabaseLogging;
+import me.csdad.starfarming.Errors.GeneralLogging;
 import me.csdad.starfarming.Utility.StringFormatting;
 
 public class PlayerManager {
@@ -119,6 +122,63 @@ public class PlayerManager {
 		
 		// return the uuid
 		return uuid;
+		
+	}
+	
+	public HashMap<String, StarPlayer> getAllStarPlayers(Connection conn, Core plugin, boolean logging) {
+		
+		HashMap<String, StarPlayer> players = new HashMap<>();
+		
+		try {
+				
+			String sql_statement = "SELECT uuid, name, experience, starcoins, settings FROM players";
+				
+			PreparedStatement stmt = conn.prepareStatement(sql_statement);
+				
+			ResultSet rs = stmt.executeQuery();
+				
+			while(rs.next()) {
+				String uuid = rs.getString("uuid");
+				String name = rs.getString("name");
+				int experience = rs.getInt("experience");
+				int starcoins = rs.getInt("starcoins");
+				
+				JSONObject parsedSettings = StringFormatting.parseJSONString(rs.getString("settings"));
+				
+				StarPlayerSettings settings;
+				if(parsedSettings == null) {
+					settings = new StarPlayerSettings(true, new JSONObject("{\"scoreboard\": \"enabled\"}")); // default value
+				} else {
+					
+					String scoreboardToggledParse = parsedSettings.getString("scoreboard");
+					boolean scoreboardToggle = (scoreboardToggledParse.equalsIgnoreCase("enabled")) ? true : false;
+					
+					// set the settings value
+					settings = new StarPlayerSettings(scoreboardToggle, parsedSettings);
+				}
+				
+				
+				StarPlayer loadedPlayer = new StarPlayer(uuid, name, experience, starcoins, settings);
+				
+				plugin.getMemoryStore().addStarPlayer(loadedPlayer, uuid);
+				
+				
+				if(logging) {
+					Bukkit.getLogger().log(Level.INFO, GeneralLogging.VERBOSE_LOAD.getLog() + uuid);
+				}
+
+			}
+			
+			plugin.getCropManager().loadAllCrops(logging); // call it here as this relies on the player memory store being established
+				
+		} catch(SQLException e) {
+				
+			Bukkit.getLogger().log(Level.SEVERE, DatabaseLogging.SQL_EXCEPTION.getLog());
+			e.printStackTrace();
+			
+		}
+		
+		return players;
 		
 	}
 	

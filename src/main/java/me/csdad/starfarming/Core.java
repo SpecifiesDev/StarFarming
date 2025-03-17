@@ -2,9 +2,9 @@ package me.csdad.starfarming;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -14,7 +14,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.json.JSONObject;
 
 import me.csdad.starfarming.Commands.Admin.Experience.SetExperience;
 import me.csdad.starfarming.Commands.Admin.Experience.SetExperienceTabCompleter;
@@ -31,8 +30,8 @@ import me.csdad.starfarming.Commands.Shop.Selling.SellAll;
 import me.csdad.starfarming.DataStructures.MemoryStore;
 import me.csdad.starfarming.DataStructures.StarCrop;
 import me.csdad.starfarming.DataStructures.Players.StarPlayer;
-import me.csdad.starfarming.DataStructures.Players.StarPlayerSettings;
 import me.csdad.starfarming.Databasing.DatabaseManager;
+import me.csdad.starfarming.Databasing.PlayerManager;
 import me.csdad.starfarming.Databasing.PersistentCrops.PersistentCropManager;
 import me.csdad.starfarming.Errors.DatabaseLogging;
 import me.csdad.starfarming.Errors.GeneralLogging;
@@ -40,9 +39,7 @@ import me.csdad.starfarming.Events.PlayerDataManagement;
 import me.csdad.starfarming.Events.CropEvents.PlayerHarvestEvent;
 import me.csdad.starfarming.Events.CropEvents.PlayerPlantEvent;
 import me.csdad.starfarming.Events.CropEvents.ProvideSeeds;
-import me.csdad.starfarming.Testing.TestCustomEvents;
 import me.csdad.starfarming.Utility.SeasonManager;
-import me.csdad.starfarming.Utility.StringFormatting;
 import net.md_5.bungee.api.ChatColor;
 
 public class Core extends JavaPlugin {
@@ -65,8 +62,6 @@ public class Core extends JavaPlugin {
 	// indicate if logging is set to be verbose
 	private boolean verbose_logging;
 	
-	// loading count to re-loop the memory store loading 3 times
-	int load_count = 0;
 	
 	public void onEnable() {
 		instance = this;
@@ -153,6 +148,9 @@ public class Core extends JavaPlugin {
 		return this.manager.getConnection();
 	}
 	
+	public PersistentCropManager getCropManager() {
+		return this.saveCrops;
+	}
 	
 	/**
 	 * private functions
@@ -217,69 +215,29 @@ public class Core extends JavaPlugin {
 		
 		info("Loading all existing database players into memory store...");
 		
-		if(load_count == 3) {
-			Bukkit.getLogger().log(Level.SEVERE, DatabaseLogging.FAILED_TO_LOAD_MEMSTORE.getLog());
-			Bukkit.getPluginManager().disablePlugin(this);
-			return;
-		}
-		
-		load_count++;
 		
 		if(verbose_logging) {
 			info("Verbose logging is enabled in the config...");
 		} else {
 			info("Verbose logging is disabled in the config... Skipping logging individual events");
 		}
-			
-		try {
-			Connection conn = this.manager.getConnection();
-				
-			String sql_statement = "SELECT uuid, name, experience, starcoins, settings FROM players";
-				
-			PreparedStatement stmt = conn.prepareStatement(sql_statement);
-				
-			ResultSet rs = stmt.executeQuery();
-				
-			while(rs.next()) {
-				String uuid = rs.getString("uuid");
-				String name = rs.getString("name");
-				int experience = rs.getInt("experience");
-				int starcoins = rs.getInt("starcoins");
-				
-				JSONObject parsedSettings = StringFormatting.parseJSONString(rs.getString("settings"));
-				
-				StarPlayerSettings settings;
-				if(parsedSettings == null) {
-					settings = new StarPlayerSettings(true, new JSONObject("{\"scoreboard\": \"enabled\"}")); // default value
-				} else {
-					
-					String scoreboardToggledParse = parsedSettings.getString("scoreboard");
-					boolean scoreboardToggle = (scoreboardToggledParse.equalsIgnoreCase("enabled")) ? true : false;
-					
-					// set the settings value
-					settings = new StarPlayerSettings(scoreboardToggle, parsedSettings);
-				}
-				
-				
-				StarPlayer loadedPlayer = new StarPlayer(uuid, name, experience, starcoins, settings);
-				
-				this.memstore.addStarPlayer(loadedPlayer, uuid);
-				
-				
-				if(verbose_logging) {
-					Bukkit.getLogger().log(Level.INFO, GeneralLogging.VERBOSE_LOAD.getLog() + uuid);
-				}
 
-			}
 			
-			this.saveCrops.loadAllCrops(verbose_logging); // call it here as this relies on the player memory store being established
-				
+	
+		// get a new player manager to handle getting the data
+		PlayerManager pm = new PlayerManager();
+		
+		// get a new conn from the cp
+		try {
+			Connection conn = this.getNewConnection();
+			
+			HashMap<String, StarPlayer> loadedPlayers = pm.getAllStarPlayers(conn, this, verbose_logging);
+			
+			this.memstore.setPlayers(loadedPlayers);
 		} catch(SQLException e) {
-				
-			Bukkit.getLogger().log(Level.WARNING, "Failed to load players into memory store... Looping again. " + load_count + "/3 times.");
 			
+			Bukkit.getLogger().log(Level.SEVERE, DatabaseLogging.SQL_EXCEPTION.getLog());
 			e.printStackTrace();
-			loadPlayersIntoMemoryStore(e);
 			
 		}
 			
@@ -349,7 +307,18 @@ public class Core extends JavaPlugin {
 						+ "FOREIGN KEY(owner_uuid) REFERENCES players(uuid))"
 						);
 					
+					
 					persistentCrops.execute();
+					
+					PreparedStatement farmingPerks = conn.prepareStatement("CREATE TABLE IF NOT EXISTS farming_perks("
+							+ "owner_uuid TEXT, farming_level INT"
+							+ "perk_1 INT, perk_1_opt INT, perk_1_opt_2 INT, perk_1_selected INT"
+							+ "perk_2 INT, perk_2_opt INT, perk_2_opt_2 INT, perk_2_selected INT"
+							+ "perk_3 INT, perk_3_opt INT, perk_3_opt_3 INT, perk_3_selected INT)"
+							);
+					
+					farmingPerks.execute();
+					
 					// release the conn back to the pool`
 					conn.close();
 					

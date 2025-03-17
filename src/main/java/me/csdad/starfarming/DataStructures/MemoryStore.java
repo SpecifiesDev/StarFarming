@@ -50,6 +50,14 @@ public class MemoryStore {
 	private String season = "SPRING";
 	
 	/**
+	 * Method to set the hashmap of players
+	 * @param players The bnew hashmap
+	 */
+	public void setPlayers(HashMap<String, StarPlayer> players) {
+		this.playerData = players;
+	}
+	
+	/**
 	 * Method to add a player and crop information object to the memory store
 	 * @param p Player object to add - key
 	 * @param crop Crop info object to add - value
