@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import me.csdad.starfarming.Core;
 import me.csdad.starfarming.DataStructures.Players.StarPlayer;
 import me.csdad.starfarming.DataStructures.Players.StarPlayerSettings;
+import me.csdad.starfarming.DataStructures.Players.PlayerPerks.FarmingPerks;
 import me.csdad.starfarming.Errors.DatabaseLogging;
 import me.csdad.starfarming.Errors.GeneralLogging;
 import me.csdad.starfarming.Utility.StringFormatting;
@@ -122,6 +123,16 @@ public class PlayerManager {
 		
 		// return the uuid
 		return uuid;
+		
+	}
+	
+	public FarmingPerks getFarmingPerks(String uuid) {
+		
+		String query = "SELECT * FROM farming_perks WHERE owner_uuid = ?";
+		
+		try {
+			
+		}
 		
 	}
 	
