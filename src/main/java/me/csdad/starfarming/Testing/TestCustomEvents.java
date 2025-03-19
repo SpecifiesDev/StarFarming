@@ -10,10 +10,7 @@ public class TestCustomEvents implements Listener {
 	
 	@EventHandler
 	public void testXPGain(ExperienceGainEvent e) {
-		
-		System.out.println(e.getXpGained());
-		System.out.println(e.getStarPlayer().getExperience());
-		System.out.println(e.getBukkitPlayer().getName());
+
 		
 	}
 	

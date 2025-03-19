@@ -74,17 +74,13 @@ public class FarmingPerks extends Perks {
 	}
 	
 	
-	public int getFarmingLevel(int level) {
+	public int getFarmingLevel() {
 		return this.level;
 	}
 	
 	
-	public void incrementLevel() {
-		this.level++;
-	}
-	
-	public void decrementLevel() {
-		this.level--;
+	public void setFarmingLevel(int newLevel) {
+		this.level = newLevel;
 	}
 	
 	public void save(Connection conn, String uuid, boolean forceClose) {

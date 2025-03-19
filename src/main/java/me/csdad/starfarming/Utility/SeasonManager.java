@@ -146,7 +146,8 @@ public class SeasonManager {
     	        		// grab the xp for the next level
     	        		int next = ExperienceFormatting.getExperienceForLevel(level + 1);
     	        		
-    	        		String progressBar = StringFormatting.createPercentageBar(ExperienceFormatting.getExperienceForLevel(next), farmingXP, 18, ':');
+    	        		
+    	        		String progressBar = StringFormatting.createPercentageBar(next, farmingXP, 18, ':');
     	        		
     	        		levelPercentage = objective.getScore(plugin.color("&3&l " + level + "&8[" + progressBar + "&8]&3&l" + (level + 1)));
     	        		

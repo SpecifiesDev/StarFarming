@@ -3,6 +3,7 @@ package me.csdad.starfarming.Commands.Admin.Experience;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,6 +12,7 @@ import me.csdad.starfarming.Core;
 import me.csdad.starfarming.DataStructures.Players.StarPlayer;
 import me.csdad.starfarming.Errors.CommandReturn;
 import me.csdad.starfarming.Errors.Permissions;
+import me.csdad.starfarming.StarEvents.ExperienceGainEvent;
 import me.csdad.starfarming.Utility.StringFormatting;
 
 public class SetExperience implements CommandExecutor {
@@ -74,11 +76,16 @@ public class SetExperience implements CommandExecutor {
 			
 		}
 		
+		int xpBefore = player.getExperience();
 		
 		// we can pre-format the xp string as we are using a generic string for every one
 		String formattedMessaging = CommandReturn.ADMIN_SETEXP_GENERIC
 				.format("%experience%", StringFormatting.formatNumber(amount))
 				.replaceAll(",", "&7,&3");
+		
+
+		
+		
 		
 		// everything is valid, we can perform individual actions
 		switch(action.toLowerCase()) {
@@ -88,6 +95,8 @@ public class SetExperience implements CommandExecutor {
 		    			.replaceAll("%action%", "added") // individual verbage for the action
 		    			.replaceAll("%actionverb%", "to")
 		    			.replaceAll("%player%", playerName));
+		    	
+		    	
 		    	break;
 		    }
 		    case "remove": {
@@ -106,7 +115,16 @@ public class SetExperience implements CommandExecutor {
 		    			.replaceAll("%player%", playerName));
 		    	break; // no need for a default case, as we explitcitly check the action above
 		    }
+		    
+		    
 		}
+		
+		
+		int xpAfter = player.getExperience();
+		ExperienceGainEvent xpEvent = new ExperienceGainEvent(player, "farming", xpBefore, xpAfter);
+		
+		Bukkit.getPluginManager().callEvent(xpEvent);
+		
 		
 		return true;
 	}

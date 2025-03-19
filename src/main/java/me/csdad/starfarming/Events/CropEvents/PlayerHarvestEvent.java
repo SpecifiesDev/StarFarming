@@ -155,15 +155,19 @@ public class PlayerHarvestEvent implements Listener {
 		
 		StringFormatting.sendExperienceActionBar(xpGained, p, "Farming");
 		
-
+		int xpBefore = player.getExperience();
 		
 		if(!(b.getType() == Material.AIR)) b.setType(Material.AIR); // if the player is breaking, it will be air. otherwise we must break it.
 		this.plugin.getMemoryStore().getStarPlayer(p.getUniqueId().toString()).addExperience(xpGained); // add the xp to the player
 		this.plugin.getMemoryStore().removePlantedCrop(b); // remove
 		
+		int xpAfter = this.plugin.getMemoryStore().getStarPlayer(p.getUniqueId().toString()).getExperience();
+		
 		// send down bukkit events so listeners can do something else later on
 		StarCropHarvestEvent harvestEvent = new StarCropHarvestEvent(player, p, crop.getCrop());
-		ExperienceGainEvent experienceEvent = new ExperienceGainEvent(player, p, xpGained, "farming");
+		ExperienceGainEvent experienceEvent = new ExperienceGainEvent(player, "farming", xpBefore, xpAfter);
+		
+		
 		
 		// call the events
 		Bukkit.getPluginManager().callEvent(harvestEvent);

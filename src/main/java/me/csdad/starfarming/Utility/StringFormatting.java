@@ -32,13 +32,18 @@ public class StringFormatting {
 	 */
 	public static String createPercentageBar(double needed, double progress, int barLength, char barChar) {
 		
-		double percent = progress / needed;
+		int percent = (int) Math.round((progress / needed) * 100);
+		
 		
 		StringBuilder sb = new StringBuilder();
 		
+		int filledLength = Math.max(1, (int) Math.round((percent / 100.0) * barLength));
+		
+	
+		
 		for(int i = 0; i < barLength; i++) {
 			
-			if(i < barLength * percent) {
+			if(i < filledLength) {
 				sb.append(ChatColor.translateAlternateColorCodes('&', "&a&l" + barChar));
 			} else {
 				sb.append(ChatColor.translateAlternateColorCodes('&', "&7&l" + barChar));

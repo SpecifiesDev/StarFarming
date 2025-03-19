@@ -5,7 +5,7 @@ import org.bukkit.event.HandlerList;
 
 import me.csdad.starfarming.DataStructures.Players.StarPlayer;
 
-public class ExperienceGainEvent extends Event {
+public class PlayerLevelUpEvent extends Event {
 	
 	// handlers for the event
 	private static final HandlerList HANDLERS = new HandlerList();
@@ -15,15 +15,10 @@ public class ExperienceGainEvent extends Event {
 	private final StarPlayer player;
 	private final String type;
 	
-	private int xpBefore;
-	private int xpAfter;
 	
-	
-	public ExperienceGainEvent(StarPlayer player, String type, int xpBefore, int xpAfter) {
+	public PlayerLevelUpEvent(StarPlayer player, String type) {
 		this.player = player;
 		this.type = type;
-		this.xpBefore = xpBefore;
-		this.xpAfter = xpAfter;
 		
 	}
 	
@@ -31,16 +26,8 @@ public class ExperienceGainEvent extends Event {
 		return this.player;
 	}
 	
-	public String getXpType() {
+	public String getLevelType() {
 		return this.type;
-	}
-	
-	public int before() {
-		return this.xpBefore;
-	}
-	
-	public int after() {
-		return this.xpAfter;
 	}
 	
 	@Override
@@ -51,5 +38,6 @@ public class ExperienceGainEvent extends Event {
 	public static HandlerList getHandlerList() {
 		return HANDLERS;
 	}
+
 
 }
