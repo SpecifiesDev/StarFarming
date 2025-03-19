@@ -126,13 +126,88 @@ public class PlayerManager {
 		
 	}
 	
-	public FarmingPerks getFarmingPerks(String uuid) {
+	public void createDefaultFarmingPerks(Connection conn, String uuid, boolean forceClose) {
 		
-		String query = "SELECT * FROM farming_perks WHERE owner_uuid = ?";
+	    String query = "INSERT INTO farming_perks (owner_uuid, farming_level, " +
+                "perk_1, perk_1_opt, perk_1_opt_2, perk_1_selected, " +
+                "perk_2, perk_2_opt, perk_2_opt_2, perk_2_selected, " +
+                "perk_3, perk_3_opt, perk_3_opt_2, perk_3_selected) " +
+                "VALUES (?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)";
+	    
+	    try {
+	    	PreparedStatement stmt = conn.prepareStatement(query);
+	    	
+	    	stmt.setString(1, uuid);
+	    	stmt.executeUpdate();
+	    	
+	    	// return conn to cp
+	    	if(forceClose) conn.close();
+	    	
+	    } catch(SQLException e) {
+	    	
+	    	Bukkit.getLogger().log(Level.SEVERE, DatabaseLogging.SQL_EXCEPTION.getLog());
+	    	e.printStackTrace();
+	    	
+	    }
+		
+	}
+	
+	public boolean checkIfPlayerHasFarmingPerks(Connection conn, String uuid, boolean forceClose) {
+		
+		String query = "SELECT * FROM farming_perks WHERE owner_uuid =?";
 		
 		try {
 			
+			PreparedStatement stmt = conn.prepareStatement(query);
+			ResultSet rs = stmt.executeQuery();
+			
+			return rs.next();
+			
+		} catch(SQLException e) {
+			
+			Bukkit.getLogger().log(Level.SEVERE, DatabaseLogging.SQL_EXCEPTION.getLog());
+			e.printStackTrace();
+			
 		}
+		
+		return false;
+		
+	}
+	
+	public FarmingPerks getFarmingPerks(Connection conn, String uuid, boolean forceClose) {
+		
+		String query = "SELECT * FROM farming_perks WHERE owner_uuid = ?";
+		
+		
+		try {
+			
+			PreparedStatement stmt = conn.prepareStatement(query);
+			
+			stmt.setString(1, uuid);
+			
+		
+			
+			ResultSet rs = stmt.executeQuery();
+			
+            if (rs.next()) {
+                return new FarmingPerks(
+                    rs.getInt("perk_1"), rs.getInt("perk_1_opt"), rs.getInt("perk_1_opt_2"), rs.getInt("perk_1_selected"),
+                    rs.getInt("perk_2"), rs.getInt("perk_2_opt"), rs.getInt("perk_2_opt_2"), rs.getInt("perk_2_selected"),
+                    rs.getInt("perk_3"), rs.getInt("perk_3_opt"), rs.getInt("perk_3_opt_2"), rs.getInt("perk_3_selected"),
+                rs.getInt("farming_level"));
+            }
+            
+            if(forceClose) conn.close(); // return to cp
+			
+		} catch (SQLException e) {
+			
+			Bukkit.getLogger().log(Level.SEVERE, DatabaseLogging.SQL_EXCEPTION.getLog());
+			e.printStackTrace();
+			
+			
+		}
+		
+		return null;
 		
 	}
 	
@@ -181,7 +256,11 @@ public class PlayerManager {
 			}
 			
 			plugin.getCropManager().loadAllCrops(logging); // call it here as this relies on the player memory store being established
-				
+			
+			// return conn to cp
+			conn.close();
+			
+			
 		} catch(SQLException e) {
 				
 			Bukkit.getLogger().log(Level.SEVERE, DatabaseLogging.SQL_EXCEPTION.getLog());
@@ -189,6 +268,7 @@ public class PlayerManager {
 			
 		}
 		
+
 		return players;
 		
 	}
