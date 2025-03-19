@@ -126,7 +126,7 @@ public class PlayerManager {
 		
 	}
 	
-	public void createDefaultFarmingPerks(Connection conn, String uuid, boolean forceClose) {
+	public FarmingPerks createDefaultFarmingPerks(Connection conn, String uuid, boolean forceClose) {
 		
 	    String query = "INSERT INTO farming_perks (owner_uuid, farming_level, " +
                 "perk_1, perk_1_opt, perk_1_opt_2, perk_1_selected, " +
@@ -149,6 +149,8 @@ public class PlayerManager {
 	    	e.printStackTrace();
 	    	
 	    }
+	    
+	    return new FarmingPerks(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		
 	}
 	
@@ -243,8 +245,8 @@ public class PlayerManager {
 					settings = new StarPlayerSettings(scoreboardToggle, parsedSettings);
 				}
 				
-				
-				StarPlayer loadedPlayer = new StarPlayer(uuid, name, experience, starcoins, settings);
+				FarmingPerks loadedPerks = this.getFarmingPerks(conn, uuid, false);
+				StarPlayer loadedPlayer = new StarPlayer(uuid, name, experience, starcoins, settings, loadedPerks);
 				
 				plugin.getMemoryStore().addStarPlayer(loadedPlayer, uuid);
 				
@@ -306,7 +308,9 @@ public class PlayerManager {
 					settings = new StarPlayerSettings(scoreboardToggle, parsedSettings);
 				}
 				
-				player = new StarPlayer(uuid, name, xp, starcoins, settings);
+				FarmingPerks perks = this.getFarmingPerks(conn, uuid, false);
+				
+				player = new StarPlayer(uuid, name, xp, starcoins, settings, perks);
 			}
 			
 			if(forceClose) { conn.close(); } // return back to cp

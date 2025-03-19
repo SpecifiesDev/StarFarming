@@ -311,10 +311,10 @@ public class Core extends JavaPlugin {
 					persistentCrops.execute();
 					
 					PreparedStatement farmingPerks = conn.prepareStatement("CREATE TABLE IF NOT EXISTS farming_perks("
-							+ "owner_uuid TEXT, farming_level INT"
-							+ "perk_1 INT, perk_1_opt INT, perk_1_opt_2 INT, perk_1_selected INT"
-							+ "perk_2 INT, perk_2_opt INT, perk_2_opt_2 INT, perk_2_selected INT"
-							+ "perk_3 INT, perk_3_opt INT, perk_3_opt_3 INT, perk_3_selected INT)"
+							+ "owner_uuid TEXT, farming_level INT,"
+							+ "perk_1 INT, perk_1_opt INT, perk_1_opt_2 INT, perk_1_selected INT,"
+							+ "perk_2 INT, perk_2_opt INT, perk_2_opt_2 INT, perk_2_selected INT,"
+							+ "perk_3 INT, perk_3_opt INT, perk_3_opt_2 INT, perk_3_selected INT)"
 							);
 					
 					farmingPerks.execute();

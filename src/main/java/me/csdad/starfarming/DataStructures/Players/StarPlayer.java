@@ -7,6 +7,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 
+import me.csdad.starfarming.DataStructures.Players.PlayerPerks.FarmingPerks;
 import me.csdad.starfarming.Errors.DatabaseLogging;
 
 public class StarPlayer {
@@ -16,13 +17,19 @@ public class StarPlayer {
 	private int experience;
 	private int starcoins;
 	private StarPlayerSettings settings;
+	private FarmingPerks farmingPerks;
 	
-	public StarPlayer(String uuid, String name, int experience, int starcoins, StarPlayerSettings settings) {
+	public StarPlayer(String uuid, String name, int experience, int starcoins, StarPlayerSettings settings, FarmingPerks farmingPerks) {
 		this.uuid = uuid;
 		this.name = name;
 		this.experience = experience;
 		this.starcoins = starcoins;
 		this.settings = settings;
+		this.farmingPerks = farmingPerks;
+	}
+	
+	public FarmingPerks getFarmingPerks() {
+		return this.farmingPerks;
 	}
 	
 	public StarPlayerSettings getSettings() {
@@ -86,6 +93,8 @@ public class StarPlayer {
 			stmt.setString(5, this.uuid);
 			
 			stmt.executeUpdate();
+			
+			this.farmingPerks.save(conn, this.uuid, true);
 			
 		} catch(SQLException e) {
 			

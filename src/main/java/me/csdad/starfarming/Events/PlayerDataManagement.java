@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import me.csdad.starfarming.Core;
 import me.csdad.starfarming.DataStructures.Players.StarPlayer;
 import me.csdad.starfarming.DataStructures.Players.StarPlayerSettings;
+import me.csdad.starfarming.DataStructures.Players.PlayerPerks.FarmingPerks;
 import me.csdad.starfarming.Databasing.PlayerManager;
 import me.csdad.starfarming.Errors.DatabaseLogging;
 
@@ -55,7 +56,9 @@ public class PlayerDataManagement implements Listener {
 				
 				manager.addNewPlayer(p, conn, false);
 				
-				StarPlayer player = new StarPlayer(uuid, name, 0, 0, new StarPlayerSettings(true, new JSONObject("{\"scoreboard\": \"enabled\"}")));
+				FarmingPerks newPerks = manager.createDefaultFarmingPerks(conn, p.getUniqueId().toString(), false);
+				
+				StarPlayer player = new StarPlayer(uuid, name, 0, 0, new StarPlayerSettings(true, new JSONObject("{\"scoreboard\": \"enabled\"}")), newPerks);
 				
 				plugin.getMemoryStore().addStarPlayer(player, uuid); // no need to check because if the player is new there's no feasible way for them to be in the memorystore already
 				
