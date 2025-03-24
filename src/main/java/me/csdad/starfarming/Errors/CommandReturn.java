@@ -30,6 +30,9 @@ public enum CommandReturn {
 	SELLALL_SUCCESS("&aYou have sold your items for a total of &6%coins% &acoins&7."),
 	SELLALL_FAIL("&cNone of your inputed items had sell value&7."),
 	
+	PERKS_INVALID_USAGE("&cUsage&8: &7/&cperks &8<&btype&8>&7."),
+	PERKS_INVALID_TYPE("&cSorry&7, &cthe type &e%type% &cis not a valid perk type&7."),
+	
 	STARPLAYER_DNE("&cSorry&7, we were unable to pull up the player data for player &6%player%&7.");
 	
 	

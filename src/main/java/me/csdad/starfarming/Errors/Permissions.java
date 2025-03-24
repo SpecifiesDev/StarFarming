@@ -9,7 +9,9 @@ public enum Permissions {
 	
 	SETEXP("starfarming.admin.setexp"),
 	
-	PROFILE("starfarming.general.profile");
+	PROFILE("starfarming.general.profile"),
+	
+	PERKS("starfarming.general.perks");
 	
 	
 	public final String permission;
