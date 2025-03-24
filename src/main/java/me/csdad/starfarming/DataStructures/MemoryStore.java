@@ -207,11 +207,14 @@ public class MemoryStore {
 		
 		List<String> allowList =  Arrays.asList(new String[]{ "SPRING", "SUMMER", "FALL", "WINTER"});
 		
+		
 		if(!allowList.contains(season)) {
 			// we do this to prevent an invalid season from being configured, which will cause later errors in the plugin
 			// if we're expecting this allowlist but receive an invalid value
 			throw new IllegalArgumentException(GeneralLogging.INVALID_SEASON.toString());
 		}
+		
+
 		this.season = season;
 	}
 	

@@ -255,7 +255,7 @@ public class SeasonManager {
 					secondsRemaining = seconds;
 					if(currentSeason.equals("SPRING")) {
 						
-						plugin.getMemoryStore().setSeason("SPRING");
+						plugin.getMemoryStore().setSeason("SUMMER");
 						loopOverPlantedCrops("SUMMER");
 						
 					} else if(currentSeason.equals("SUMMER")) {
