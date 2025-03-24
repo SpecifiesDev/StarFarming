@@ -10,11 +10,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import me.csdad.starfarming.Core;
 import me.csdad.starfarming.DataStructures.Players.StarPlayer;
 import me.csdad.starfarming.Errors.CommandReturn;
 import me.csdad.starfarming.Errors.Permissions;
+import me.csdad.starfarming.Errors.Perks.PerkDescriptions;
 import me.csdad.starfarming.Utility.ItemFactory;
 
 public class PerksCommand implements CommandExecutor {
@@ -73,12 +75,43 @@ public class PerksCommand implements CommandExecutor {
 		
 		// everything is true, let's begin constructing perk inventory perk by perk
 		
+		handlePerkCreation(type, p, player);
+		
 		return true;
 	}
 	
+	/**
+	 * Method to get the perk string for a tier
+	 * @param tier The tier
+	 * @param selectedIndex The selected tier that the player has selected
+	 * @return Raw string
+	 */
+	private String getPerkStringForTier(int tier, int selectedIndex) {
+		
+	    switch (tier) {
+        case 1:
+            return selectedIndex == 1 ? PerkDescriptions.TIER1_GREEN_THUMB.getDescription()
+                 : selectedIndex == 2 ? PerkDescriptions.TIER1_HEIRLOOM.getDescription()
+                 : selectedIndex == 3 ? PerkDescriptions.TIER1_EFFICIENT_FARMING .getDescription()
+                 : "ERR_{invalid_desc}";
+        case 2:
+            return selectedIndex == 1 ? PerkDescriptions.TIER2_DOCTOR_FARM.getDescription()
+                 : selectedIndex == 2 ? PerkDescriptions.TIER2_HANDYMAN.getDescription()
+                 : selectedIndex == 3 ? PerkDescriptions.TIER2_POPOP.getDescription()
+                 : "ERR_{invalid_desc}";
+        case 3:
+            return selectedIndex == 1 ? PerkDescriptions.TIER3_RMF.getDescription()
+                 : selectedIndex == 2 ? PerkDescriptions.TIER3_WINTER_SOLDIER.getDescription()
+                 : selectedIndex == 3 ? PerkDescriptions.TIER3_INSIDER_TRADING.getDescription()
+                 : "ERR_{invalid_desc}";
+        default:
+            return "ERR_{invalid_desc}";
+    }
+		
+	}
 	private void handlePerkCreation(String type, Player p, StarPlayer player) {
 		
-		Inventory inv = Bukkit.createInventory(null, 45, this.plugin.color(this.plugin.getConfig().getString("logging.ingame-prefix") + " &8- &3Farming &6Perks"));
+		Inventory inv = Bukkit.createInventory(null, 45, this.plugin.color(this.plugin.getConfig().getString("logging.ingame-prefix") + " &8- &2Farming Perks"));
 		
 		ItemFactory factory = new ItemFactory(Material.BLACK_STAINED_GLASS_PANE, 1);
 		factory.setDisplayName("&8&m");
@@ -95,6 +128,8 @@ public class PerksCommand implements CommandExecutor {
 				boolean hasSelectedPerk2 = player.getFarmingPerks().getPerkSelected(2);
 				boolean hasSelectedPerk3 = player.getFarmingPerks().getPerkSelected(3);
 				
+				
+				
 				// now let's determine if player has met the level perks
 				boolean hasLevelPerk1 = level >= 3;
 				boolean hasLevelPerk2 = level >= 5;
@@ -104,6 +139,56 @@ public class PerksCommand implements CommandExecutor {
 				Material material1 = !hasLevelPerk1 ? Material.BEDROCK : (hasSelectedPerk1 ? Material.GREEN_TERRACOTTA : Material.RED_TERRACOTTA);
 				Material material2 = !hasLevelPerk2 ? Material.BEDROCK : (hasSelectedPerk2 ? Material.GREEN_TERRACOTTA : Material.RED_TERRACOTTA);
 				Material material3 = !hasLevelPerk3 ? Material.BEDROCK : (hasSelectedPerk3 ? Material.GREEN_TERRACOTTA : Material.RED_TERRACOTTA);
+				
+				// now we can parse display names.
+				String displayName1 = material1 == Material.BEDROCK ? "&c&lNot Unlocked" : (material1 == Material.GREEN_TERRACOTTA ? "&a&lPerk Selected" : "&4&lPerk Not Selected");
+				String displayName2 = material2 == Material.BEDROCK ? "&c&lNot Unlocked" : (material2 == Material.GREEN_TERRACOTTA ? "&a&lPerk Selected" : "&4&lPerk Not Selected");
+				String displayName3 = material3 == Material.BEDROCK ? "&c&lNot Unlocked" : (material3 == Material.GREEN_TERRACOTTA ? "&a&lPerk Selected" : "&4&lPerk Not Selected");
+				
+				String lore1 = material1 == Material.BEDROCK
+				        ? "&7You will unlock this tier at level &63"   // Tier 1 lore
+				        : (material1 == Material.RED_TERRACOTTA
+				            ? "&7Click this to select from a list of perks for this tier."
+				            : getPerkStringForTier(1, player.getFarmingPerks().getSelectedPerk(1)));
+				
+				
+
+				String lore2 = material2 == Material.BEDROCK
+				        ? "&7You will unlock this tier at level &65"   // Tier 2 lore
+				        : (material2 == Material.RED_TERRACOTTA
+				            ? "&7Click this to select from a list of perks for this tier."
+				            : getPerkStringForTier(2, player.getFarmingPerks().getSelectedPerk(2)));
+
+				String lore3 = material3 == Material.BEDROCK
+				        ? "&7You will unlock this tier at level &610"  // Tier 3 lore
+				        : (material3 == Material.RED_TERRACOTTA
+				            ? "&7Click this to select from a list of perks for this tier."
+				            : getPerkStringForTier(3, player.getFarmingPerks().getSelectedPerk(3)));
+				
+				// get the first item
+				factory.flush(material1, 1);				
+				factory.setDisplayName(displayName1);
+				factory.setLore(lore1);
+				ItemStack tier1 = factory.getItem();
+				
+			
+				
+				// second
+				factory.flush(material2, 1);
+				factory.setDisplayName(displayName2);
+				factory.setLore(lore2);
+				ItemStack tier2 = factory.getItem();
+				
+				factory.flush(material3, 1);
+				factory.setDisplayName(displayName3);
+				factory.setLore(lore3);
+				ItemStack tier3 = factory.getItem();
+				
+				inv.setItem(20, tier1);
+				inv.setItem(22, tier2);
+				inv.setItem(24, tier3);
+				
+				p.openInventory(inv);
 				
 			}
 		}

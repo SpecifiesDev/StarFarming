@@ -26,3 +26,7 @@ commands:
         usage: /profile
         description: Command for a player to view their StarFarming profile.
         aliases: [pf]
+    perks:
+        usage: /perks <type>
+        description: Perks command to view and select perks of different experience types.
+        aliases: [pks]

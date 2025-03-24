@@ -25,6 +25,8 @@ import me.csdad.starfarming.Commands.Experience.LevelTabCompleter;
 import me.csdad.starfarming.Commands.Profile.HandleProfileInteraction;
 import me.csdad.starfarming.Commands.Profile.HandleSettingsInteraction;
 import me.csdad.starfarming.Commands.Profile.ProfileCommand;
+import me.csdad.starfarming.Commands.Profile.Perks.PerksCommand;
+import me.csdad.starfarming.Commands.Profile.Perks.PerksTabCompleter;
 import me.csdad.starfarming.Commands.Shop.Selling.HandleSellAllInteraction;
 import me.csdad.starfarming.Commands.Shop.Selling.SellAll;
 import me.csdad.starfarming.DataStructures.MemoryStore;
@@ -177,6 +179,10 @@ public class Core extends JavaPlugin {
 		
 		// register profile, no tc as no args
 		getCommand("profile").setExecutor(new ProfileCommand());
+		
+		// register perks command and TC
+		getCommand("perks").setExecutor(new PerksCommand());
+		getCommand("perks").setTabCompleter(new PerksTabCompleter());
 	}
 	
 	private void registerEvents() {

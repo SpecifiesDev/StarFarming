@@ -38,6 +38,51 @@ public class FarmingPerks extends Perks {
 	}
 	
 	@Override
+	public void setSelectedPerkForTier(int tier, int selectedPerk) throws InvalidPerkRange, IllegalStateException {
+		if (tier < 1 || tier > 3) throw new InvalidPerkRange("Tier is out of range");
+		
+		// get the options for the tier
+		Integer[] options = perkOptions.get(tier);
+		
+		// validate
+		if(options == null) throw new IllegalStateException("Perk options for tier " + tier + " are missing.");
+		
+		boolean isValidOption = false;
+		
+		// loop and search for a valid option
+		for(int i = 0; i < options.length; i++) {
+			
+			if(options[i] == selectedPerk) {
+				options[i] = 1; // mark this perk as selected.
+				isValidOption = true;
+			} else {
+				// just make sure we demark others to prevent duplicate perk issues
+				options[i] = 0;
+			}
+			
+		}
+		
+		// validate that the selected option was successful
+		if(!isValidOption) throw new InvalidPerkRange("Invalid perk selected for this tier.");
+		
+		// update the perk options map with the updated array
+		perkOptions.put(tier, options);
+		
+		// mark that a perk has been selected for this tier
+		perkSelection.put(tier, 1);
+		
+	}
+	
+	@Override
+	public int getSelectedPerkForTier(int tier) throws InvalidPerkRange {
+	    if (tier < 1 || tier > 3) {
+	        throw new InvalidPerkRange("Tier is out of range");
+	    }
+
+	    return perkSelection.getOrDefault(tier, -1);
+	}
+	
+	@Override
 	public boolean getPerkSelected(int perk) throws InvalidPerkRange {
 		
 		if(perk > 3 || perk < 1) {
