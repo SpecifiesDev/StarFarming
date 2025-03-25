@@ -133,10 +133,11 @@ public class PerksCommand implements CommandExecutor {
 				// now let's determine if player has met the level perks
 				boolean hasLevelPerk1 = level >= 3;
 				boolean hasLevelPerk2 = level >= 5;
-				boolean hasLevelPerk3 = level == 10;
+				boolean hasLevelPerk3 = level >= 10;
 				
 				// now with all of our values we can establish the 3 materials for each item
 				Material material1 = !hasLevelPerk1 ? Material.BEDROCK : (hasSelectedPerk1 ? Material.GREEN_TERRACOTTA : Material.RED_TERRACOTTA);
+				
 				Material material2 = !hasLevelPerk2 ? Material.BEDROCK : (hasSelectedPerk2 ? Material.GREEN_TERRACOTTA : Material.RED_TERRACOTTA);
 				Material material3 = !hasLevelPerk3 ? Material.BEDROCK : (hasSelectedPerk3 ? Material.GREEN_TERRACOTTA : Material.RED_TERRACOTTA);
 				

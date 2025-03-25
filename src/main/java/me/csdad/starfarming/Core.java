@@ -25,6 +25,7 @@ import me.csdad.starfarming.Commands.Experience.LevelTabCompleter;
 import me.csdad.starfarming.Commands.Profile.HandleProfileInteraction;
 import me.csdad.starfarming.Commands.Profile.HandleSettingsInteraction;
 import me.csdad.starfarming.Commands.Profile.ProfileCommand;
+import me.csdad.starfarming.Commands.Profile.Perks.HandlePerksInteraction;
 import me.csdad.starfarming.Commands.Profile.Perks.PerksCommand;
 import me.csdad.starfarming.Commands.Profile.Perks.PerksTabCompleter;
 import me.csdad.starfarming.Commands.Shop.Selling.HandleSellAllInteraction;
@@ -211,6 +212,8 @@ public class Core extends JavaPlugin {
 		// register level up events for farming
 		pm.registerEvents(new PlayerExperienceGain(), this);
 		
+		// register events for perk clicking
+		pm.registerEvents(new HandlePerksInteraction(), this);
 		
 	}
 	
